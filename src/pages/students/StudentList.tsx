@@ -3,15 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import { 
   UserPlus, 
   Eye, 
-  Edit, 
   Trash2, 
   CreditCard, 
-  FileSpreadsheet, 
   Printer, 
   Filter,
-  CheckCircle,
-  XCircle,
-  Download
+  CheckCircle
 } from 'lucide-react';
 import { Student, SchoolClass, Section } from '@/types';
 import { dbService } from '@/services/dbService';
@@ -68,7 +64,6 @@ export const StudentList: React.FC = () => {
     }
   };
 
-  // Filter students based on dropdowns
   const filteredStudents = students.filter(s => {
     if (selectedClassId !== 'all' && s.classId !== selectedClassId) return false;
     if (selectedStatus !== 'all' && s.status !== selectedStatus) return false;
@@ -86,12 +81,12 @@ export const StudentList: React.FC = () => {
       header: 'Student Name',
       sortable: true,
       cell: (student) => (
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 rounded-full bg-slate-900 text-white flex items-center justify-center font-bold text-xs shrink-0">
+        <div className="flex items-center gap-2.5">
+          <div className="w-7 h-7 rounded bg-[#4E2284] text-white flex items-center justify-center font-medium text-xs shrink-0">
             {student.firstName.charAt(0)}
           </div>
           <div>
-            <p className="font-semibold text-slate-900">{student.fullName}</p>
+            <p className="font-medium text-slate-900">{student.fullName}</p>
             <p className="text-[11px] text-slate-400">Roll: #{student.rollNumber} • {student.gender}</p>
           </div>
         </div>
@@ -141,24 +136,24 @@ export const StudentList: React.FC = () => {
       header: 'Actions',
       className: 'text-right',
       cell: (student) => (
-        <div className="flex items-center justify-end gap-1.5" onClick={e => e.stopPropagation()}>
+        <div className="flex items-center justify-end gap-1" onClick={e => e.stopPropagation()}>
           <button
             onClick={() => navigate(`/students/${student.id}`)}
-            className="p-1.5 text-slate-500 hover:text-brand-600 hover:bg-slate-100 rounded-md transition-colors"
+            className="p-1.5 text-slate-500 hover:text-[#4E2284] hover:bg-slate-100 rounded transition-colors max-h-[36px]"
             title="View Full Profile"
           >
             <Eye className="w-4 h-4" />
           </button>
           <button
             onClick={() => navigate(`/students/id-cards?studentId=${student.id}`)}
-            className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 rounded-md transition-colors"
+            className="p-1.5 text-slate-500 hover:text-emerald-600 hover:bg-slate-100 rounded transition-colors max-h-[36px]"
             title="Print ID Card"
           >
             <CreditCard className="w-4 h-4" />
           </button>
           <button
             onClick={() => setDeleteId(student.id)}
-            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded-md transition-colors"
+            className="p-1.5 text-slate-400 hover:text-rose-600 hover:bg-rose-50 rounded transition-colors max-h-[36px]"
             title="Delete Student"
           >
             <Trash2 className="w-4 h-4" />
@@ -169,13 +164,13 @@ export const StudentList: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6">
+    <div className="space-y-5">
       {/* Page Header */}
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-3">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Student Directory</h1>
-          <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-            Manage student registrations, personal records, academic credentials, and identity cards.
+          <h1 className="text-xl font-medium text-slate-900 tracking-tight">Student Directory</h1>
+          <p className="text-slate-500 text-xs mt-0.5">
+            Manage student registrations, academic credentials, and identity cards.
           </p>
         </div>
 
@@ -184,7 +179,7 @@ export const StudentList: React.FC = () => {
             variant="secondary"
             size="sm"
             onClick={() => navigate('/students/id-cards')}
-            icon={<Printer className="w-4 h-4 text-slate-600" />}
+            icon={<Printer className="w-3.5 h-3.5 text-slate-600" />}
           >
             Print ID Cards
           </Button>
@@ -192,7 +187,7 @@ export const StudentList: React.FC = () => {
             variant="secondary"
             size="sm"
             onClick={() => navigate('/students/promotion')}
-            icon={<CheckCircle className="w-4 h-4 text-emerald-600" />}
+            icon={<CheckCircle className="w-3.5 h-3.5 text-emerald-600" />}
           >
             Student Promotion
           </Button>
@@ -200,7 +195,7 @@ export const StudentList: React.FC = () => {
             variant="primary"
             size="sm"
             onClick={() => navigate('/students/add')}
-            icon={<UserPlus className="w-4 h-4" />}
+            icon={<UserPlus className="w-3.5 h-3.5" />}
           >
             New Admission
           </Button>
@@ -208,17 +203,17 @@ export const StudentList: React.FC = () => {
       </div>
 
       {/* Filter Row */}
-      <div className="bg-white p-4 rounded-xl border border-slate-200/80 shadow-[0_1px_3px_rgba(15,23,42,0.06)] flex flex-wrap items-center gap-4 text-xs">
-        <div className="flex items-center gap-1.5 text-slate-500 font-semibold uppercase tracking-wider">
+      <div className="bg-white p-3 rounded border border-slate-200/90 shadow-sm flex flex-wrap items-center gap-3 text-xs">
+        <div className="flex items-center gap-1.5 text-slate-500 font-medium uppercase tracking-wider text-[11px]">
           <Filter className="w-3.5 h-3.5" /> Filters:
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <label className="text-slate-600 font-medium">Class:</label>
           <select
             value={selectedClassId}
             onChange={(e) => setSelectedClassId(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-slate-900"
+            className="bg-slate-50 border border-slate-200 rounded px-2.5 h-[34px] max-h-[36px] focus:outline-none focus:ring-1 focus:ring-[#4E2284] font-medium"
           >
             <option value="all">All Classes</option>
             {classes.map(c => (
@@ -227,12 +222,12 @@ export const StudentList: React.FC = () => {
           </select>
         </div>
 
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-1.5">
           <label className="text-slate-600 font-medium">Status:</label>
           <select
             value={selectedStatus}
             onChange={(e) => setSelectedStatus(e.target.value)}
-            className="bg-slate-50 border border-slate-200 rounded-lg px-2.5 py-1.5 focus:outline-none focus:ring-1 focus:ring-slate-900"
+            className="bg-slate-50 border border-slate-200 rounded px-2.5 h-[34px] max-h-[36px] focus:outline-none focus:ring-1 focus:ring-[#4E2284] font-medium"
           >
             <option value="all">All Status</option>
             <option value="active">Active</option>
@@ -242,7 +237,7 @@ export const StudentList: React.FC = () => {
         </div>
 
         <div className="ml-auto text-slate-500 font-medium">
-          Total: <span className="font-bold text-slate-900">{filteredStudents.length}</span> students
+          Total: <span className="font-medium text-slate-900">{filteredStudents.length}</span> students
         </div>
       </div>
 
@@ -250,7 +245,7 @@ export const StudentList: React.FC = () => {
       <DataTable
         data={filteredStudents}
         columns={columns}
-        searchPlaceholder="Search by name, roll no, admission no, parent..."
+        searchPlaceholder="Search by name, roll no, admission no..."
         searchFields={['fullName', 'admissionNumber', 'rollNumber', 'fatherName', 'fatherPhone']}
         onRowClick={(student) => navigate(`/students/${student.id}`)}
         selectable
@@ -271,4 +266,3 @@ export const StudentList: React.FC = () => {
     </div>
   );
 };
-

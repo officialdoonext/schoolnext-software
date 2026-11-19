@@ -3,12 +3,39 @@
 @tailwind utilities;
 
 @layer base {
+  * {
+    font-family: 'Sora', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif !important;
+  }
+
   body {
-    @apply bg-slate-50 text-slate-900 font-sans antialiased;
+    @apply bg-slate-50 text-slate-800 antialiased;
+    font-family: 'Sora', sans-serif !important;
+    font-weight: 400;
+  }
+
+  /* Maximum font weight is 500 everywhere */
+  h1, h2, h3, h4, h5, h6, strong, b, th, .font-semibold, .font-bold, .font-extrabold, .font-black {
+    font-weight: 500 !important;
+  }
+
+  /* Maximum border radius is 6px everywhere */
+  *, *::before, *::after {
+    border-radius: min(6px, inherit);
+  }
+
+  .rounded-lg, .rounded-xl, .rounded-2xl, .rounded-3xl, .rounded-full, .rounded-md {
+    border-radius: 6px !important;
+  }
+
+  /* Inputs and buttons maximum height is 36px */
+  button, 
+  input:not([type="checkbox"]):not([type="radio"]), 
+  select {
+    max-height: 36px !important;
   }
 }
 
-/* Custom scrollbar for modern ERP aesthetic */
+/* Custom subtle scrollbar */
 .custom-scrollbar::-webkit-scrollbar {
   width: 5px;
   height: 5px;
@@ -19,12 +46,12 @@
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: #334155;
-  border-radius: 9999px;
+  background: #cbd5e1;
+  border-radius: 6px !important;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: #475569;
+  background: #94a3b8;
 }
 
 /* Print utility styles */
@@ -46,4 +73,3 @@
     border: none !important;
   }
 }
-

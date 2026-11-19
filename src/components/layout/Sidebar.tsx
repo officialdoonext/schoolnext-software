@@ -65,11 +65,11 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       title: 'Dashboard',
       path: '/dashboard',
-      icon: <LayoutDashboard className="w-5 h-5 shrink-0" />,
+      icon: <LayoutDashboard className="w-4 h-4 shrink-0" />,
     },
     {
       title: 'Students',
-      icon: <Users className="w-5 h-5 shrink-0" />,
+      icon: <Users className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'vice_principal', 'teacher', 'receptionist'],
       subItems: [
         { title: 'Student List', path: '/students' },
@@ -81,7 +81,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Academics',
-      icon: <GraduationCap className="w-5 h-5 shrink-0" />,
+      icon: <GraduationCap className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'vice_principal', 'teacher'],
       subItems: [
         { title: 'Academic Years', path: '/academics/years' },
@@ -92,7 +92,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Attendance',
-      icon: <CalendarCheck className="w-5 h-5 shrink-0" />,
+      icon: <CalendarCheck className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'teacher', 'receptionist'],
       subItems: [
         { title: 'Student Attendance', path: '/attendance/student' },
@@ -103,7 +103,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Fees & Finance',
-      icon: <CreditCard className="w-5 h-5 shrink-0" />,
+      icon: <CreditCard className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'accountant'],
       subItems: [
         { title: 'Fee Collection', path: '/fees/collection' },
@@ -115,7 +115,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Examinations',
-      icon: <Award className="w-5 h-5 shrink-0" />,
+      icon: <Award className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'teacher'],
       subItems: [
         { title: 'Exam Schedule', path: '/examinations/schedule' },
@@ -126,7 +126,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Staff & HR',
-      icon: <Briefcase className="w-5 h-5 shrink-0" />,
+      icon: <Briefcase className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'accountant'],
       subItems: [
         { title: 'Staff Directory', path: '/staff' },
@@ -136,7 +136,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Timetable',
-      icon: <Clock className="w-5 h-5 shrink-0" />,
+      icon: <Clock className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'teacher', 'student'],
       subItems: [
         { title: 'Class Timetable', path: '/timetable/class' },
@@ -146,7 +146,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Homework',
-      icon: <BookOpen className="w-5 h-5 shrink-0" />,
+      icon: <BookOpen className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'teacher', 'student', 'parent'],
       subItems: [
         { title: 'Assignments List', path: '/homework' },
@@ -156,7 +156,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Transport',
-      icon: <Bus className="w-5 h-5 shrink-0" />,
+      icon: <Bus className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'transport_manager', 'receptionist'],
       subItems: [
         { title: 'Bus Routes & Stops', path: '/transport/routes' },
@@ -165,7 +165,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Library',
-      icon: <BookMarked className="w-5 h-5 shrink-0" />,
+      icon: <BookMarked className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'librarian'],
       subItems: [
         { title: 'Books Catalog', path: '/library' },
@@ -174,7 +174,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Inventory',
-      icon: <Package className="w-5 h-5 shrink-0" />,
+      icon: <Package className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin'],
       subItems: [
         { title: 'Stock Items', path: '/inventory' },
@@ -182,7 +182,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Front Office',
-      icon: <Building2 className="w-5 h-5 shrink-0" />,
+      icon: <Building2 className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'receptionist', 'principal'],
       subItems: [
         { title: 'Admission Enquiries', path: '/front-office/enquiries' },
@@ -192,7 +192,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
     {
       title: 'Portals',
-      icon: <UserCheck className="w-5 h-5 shrink-0" />,
+      icon: <UserCheck className="w-4 h-4 shrink-0" />,
       subItems: [
         { title: 'Parent Portal', path: '/portals/parent' },
         { title: 'Teacher Portal', path: '/portals/teacher' },
@@ -202,12 +202,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
     {
       title: 'Reports & Export',
       path: '/reports',
-      icon: <FileText className="w-5 h-5 shrink-0" />,
+      icon: <FileText className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin', 'principal', 'accountant'],
     },
     {
       title: 'School Settings',
-      icon: <Settings className="w-5 h-5 shrink-0" />,
+      icon: <Settings className="w-4 h-4 shrink-0" />,
       allowedRoles: ['super_admin', 'school_admin'],
       subItems: [
         { title: 'School Profile', path: '/settings/school' },
@@ -218,7 +218,6 @@ export const Sidebar: React.FC<SidebarProps> = ({
     },
   ];
 
-  // Filter items based on user role
   const userRole = currentUser?.role || 'school_admin';
   const visibleItems = menuItems.filter(item => {
     if (!item.allowedRoles) return true;
@@ -230,49 +229,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Mobile Backdrop */}
       {mobileOpen && (
         <div
-          className="fixed inset-0 z-40 bg-slate-900/60 backdrop-blur-sm lg:hidden"
+          className="fixed inset-0 z-40 bg-slate-900/40 backdrop-blur-sm lg:hidden"
           onClick={onCloseMobile}
         />
       )}
 
-      {/* Sidebar element */}
+      {/* Sidebar - Pure White Background */}
       <aside
-        className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col bg-slate-900 text-slate-300 transition-all duration-300 ease-in-out border-r border-slate-800 shadow-xl lg:static ${
+        className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col bg-white text-slate-700 transition-all duration-200 ease-in-out border-r border-slate-200 shadow-sm lg:static ${
           collapsed ? 'w-20' : 'w-64'
         } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-800/80 bg-slate-950/60">
+        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 bg-white">
           <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-10 h-10 rounded-xl bg-gradient-to-tr from-brand-600 to-sky-400 p-0.5 flex items-center justify-center shrink-0 shadow-md">
-              <div className="w-full h-full bg-slate-900 rounded-[10px] flex items-center justify-center">
-                <span className="font-extrabold text-sky-400 text-lg tracking-wider">SN</span>
-              </div>
+            <div className="w-9 h-9 rounded bg-[#4E2284] flex items-center justify-center shrink-0 shadow-sm">
+              <span className="font-medium text-white text-base tracking-wider">SN</span>
             </div>
             {!collapsed && (
               <div className="flex flex-col truncate">
-                <span className="font-bold text-white tracking-wide text-base leading-tight">School Next</span>
-                <span className="text-[10px] text-sky-400 font-medium uppercase tracking-widest truncate">ERP Enterprise</span>
+                <span className="font-medium text-slate-900 tracking-tight text-sm leading-tight">School Next</span>
+                <span className="text-[10px] text-[#4E2284] font-medium uppercase tracking-wider truncate">Enterprise ERP</span>
               </div>
             )}
           </div>
 
           <button
             onClick={onToggleCollapse}
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded-lg text-slate-400 hover:text-white hover:bg-slate-800 transition-colors"
+            className="hidden lg:flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
           >
             {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
           </button>
         </div>
 
         {/* Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-4 space-y-1.5 custom-scrollbar">
+        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
           {visibleItems.map((item, idx) => {
             const hasSub = item.subItems && item.subItems.length > 0;
             const subKey = item.title.toLowerCase().replace(/[^a-z0-9]/g, '');
             const isOpen = openSubmenus[subKey];
             const isAnySubActive = hasSub && item.subItems?.some(s => location.pathname === s.path);
-            const isDirectActive = item.path ? location.pathname === item.path : false;
 
             if (!hasSub) {
               return (
@@ -281,10 +277,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                   to={item.path!}
                   onClick={onCloseMobile}
                   className={({ isActive }) =>
-                    `flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                    `flex items-center gap-2.5 px-3 py-2 rounded text-xs font-medium transition-colors max-h-[36px] ${
                       isActive
-                        ? 'bg-brand-600 text-white shadow-sm'
-                        : 'text-slate-400 hover:text-white hover:bg-slate-800/70'
+                        ? 'bg-[#4E2284] text-white shadow-sm'
+                        : 'text-slate-600 hover:text-[#4E2284] hover:bg-[#4E2284]/5'
                     }`
                   }
                   title={collapsed ? item.title : undefined}
@@ -299,27 +295,27 @@ export const Sidebar: React.FC<SidebarProps> = ({
               <div key={idx} className="space-y-1">
                 <button
                   onClick={() => toggleSubmenu(subKey)}
-                  className={`w-full flex items-center justify-between px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-150 ${
+                  className={`w-full flex items-center justify-between px-3 py-2 rounded text-xs font-medium transition-colors max-h-[36px] ${
                     isAnySubActive
-                      ? 'text-white bg-slate-800/90'
-                      : 'text-slate-400 hover:text-white hover:bg-slate-800/60'
+                      ? 'text-[#4E2284] bg-[#4E2284]/10'
+                      : 'text-slate-600 hover:text-[#4E2284] hover:bg-[#4E2284]/5'
                   }`}
                   title={collapsed ? item.title : undefined}
                 >
-                  <div className="flex items-center gap-3 truncate">
+                  <div className="flex items-center gap-2.5 truncate">
                     {item.icon}
                     {!collapsed && <span className="truncate">{item.title}</span>}
                   </div>
                   {!collapsed && (
-                    <span className="text-slate-500">
-                      {isOpen ? <ChevronDown className="w-4 h-4" /> : <ChevronRight className="w-4 h-4" />}
+                    <span className="text-slate-400">
+                      {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
                     </span>
                   )}
                 </button>
 
                 {/* Submenu links */}
                 {isOpen && !collapsed && (
-                  <div className="pl-10 pr-2 py-1 space-y-1 border-l border-slate-800 ml-5 my-1">
+                  <div className="pl-8 pr-1 py-1 space-y-0.5 border-l border-slate-200 ml-4 my-1">
                     {item.subItems
                       ?.filter(sub => !sub.allowedRoles || sub.allowedRoles.includes(userRole))
                       .map((sub, sIdx) => {
@@ -329,10 +325,10 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             key={sIdx}
                             to={sub.path}
                             onClick={onCloseMobile}
-                            className={`block py-1.5 px-2.5 rounded-md text-xs font-medium transition-colors ${
+                            className={`block py-1.5 px-2.5 rounded text-[11px] font-medium transition-colors ${
                               isActive
-                                ? 'text-sky-400 bg-slate-800/80 font-semibold'
-                                : 'text-slate-400 hover:text-slate-200 hover:bg-slate-800/40'
+                                ? 'text-[#4E2284] bg-[#4E2284]/10 font-medium'
+                                : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                             }`}
                           >
                             {sub.title}
@@ -348,13 +344,12 @@ export const Sidebar: React.FC<SidebarProps> = ({
 
         {/* Footer info */}
         {!collapsed && (
-          <div className="p-3 border-t border-slate-800/80 bg-slate-950/40 text-[11px] text-slate-400 flex items-center justify-between">
+          <div className="p-3 border-t border-slate-100 bg-slate-50/60 text-[11px] text-slate-500 flex items-center justify-between">
             <span className="truncate">{school?.name || 'School Next'}</span>
-            <span className="px-1.5 py-0.5 rounded bg-slate-800 text-sky-400 text-[10px] font-mono">v1.0</span>
+            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[#4E2284] text-[10px] font-medium">v1.0</span>
           </div>
         )}
       </aside>
     </>
   );
 };
-

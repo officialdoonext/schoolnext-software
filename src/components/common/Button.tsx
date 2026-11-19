@@ -18,21 +18,22 @@ export const Button: React.FC<ButtonProps> = ({
   disabled,
   ...props
 }) => {
-  const baseClasses = 'inline-flex items-center justify-center font-medium rounded-lg transition-all duration-150 focus:outline-none focus:ring-2 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed select-none';
+  // Enforce max-height: 36px, max font-weight: 500, max border-radius: 6px
+  const baseClasses = 'inline-flex items-center justify-center font-medium rounded transition-colors duration-150 focus:outline-none focus:ring-2 focus:ring-offset-1 disabled:opacity-50 disabled:cursor-not-allowed select-none max-h-[36px] h-[36px] box-border';
 
   const sizeClasses = {
     sm: 'text-xs px-2.5 py-1.5 gap-1.5',
-    md: 'text-sm px-4 py-2 gap-2',
-    lg: 'text-base px-5 py-2.5 gap-2.5',
+    md: 'text-xs px-3.5 py-1.5 gap-2',
+    lg: 'text-xs px-4 py-1.5 gap-2',
   };
 
   const variantClasses = {
-    primary: 'bg-slate-900 text-white hover:bg-slate-800 active:bg-slate-950 focus:ring-slate-900 shadow-sm border border-slate-900',
+    primary: 'bg-[#4E2284] text-white hover:bg-[#3f1a6e] active:bg-[#33145a] focus:ring-[#4E2284] shadow-sm border border-[#4E2284]',
     secondary: 'bg-white text-slate-700 hover:bg-slate-50 border border-slate-300 focus:ring-slate-400 shadow-sm',
-    danger: 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 focus:ring-rose-500 shadow-sm',
-    outline: 'border border-slate-300 text-slate-700 hover:bg-slate-50 focus:ring-slate-400',
-    ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-300',
-    success: 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus:ring-emerald-500 shadow-sm',
+    danger: 'bg-rose-600 text-white hover:bg-rose-700 active:bg-rose-800 focus:ring-rose-500 shadow-sm border border-rose-600',
+    outline: 'border border-[#4E2284] text-[#4E2284] hover:bg-[#4E2284]/5 focus:ring-[#4E2284]',
+    ghost: 'text-slate-600 hover:bg-slate-100 hover:text-slate-900 focus:ring-slate-300 border border-transparent',
+    success: 'bg-emerald-600 text-white hover:bg-emerald-700 active:bg-emerald-800 focus:ring-emerald-500 shadow-sm border border-emerald-600',
   };
 
   return (
@@ -42,12 +43,11 @@ export const Button: React.FC<ButtonProps> = ({
       {...props}
     >
       {loading ? (
-        <Loader2 className="w-4 h-4 animate-spin" />
+        <Loader2 className="w-3.5 h-3.5 animate-spin" />
       ) : (
         icon && <span className="shrink-0">{icon}</span>
       )}
-      <span>{children}</span>
+      <span className="truncate">{children}</span>
     </button>
   );
 };
-

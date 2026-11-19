@@ -4,9 +4,7 @@ import {
   ChevronLeft, 
   ChevronRight, 
   ArrowUpDown, 
-  Download, 
-  FileSpreadsheet, 
-  Filter
+  FileSpreadsheet
 } from 'lucide-react';
 import * as XLSX from 'xlsx';
 import { Button } from './Button';
@@ -63,7 +61,6 @@ export function DataTable<T extends { id: string | number }>({
           return val !== undefined && val !== null && String(val).toLowerCase().includes(term);
         });
       }
-      // If no specific fields provided, search all string/number fields
       return Object.values(item).some((val) => {
         if (typeof val === 'string' || typeof val === 'number') {
           return String(val).toLowerCase().includes(term);
@@ -159,10 +156,10 @@ export function DataTable<T extends { id: string | number }>({
   };
 
   return (
-    <div className="space-y-4">
-      {/* Control Bar */}
-      <div className="flex flex-col sm:flex-row gap-3 justify-between items-start sm:items-center">
-        <div className="relative w-full sm:w-72">
+    <div className="space-y-3 font-sans">
+      {/* Control Bar: Inputs and buttons max-height 36px */}
+      <div className="flex flex-col sm:flex-row gap-2.5 justify-between items-start sm:items-center">
+        <div className="relative w-full sm:w-72 max-h-[36px]">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-slate-400" />
           <input
             type="text"
@@ -172,7 +169,7 @@ export function DataTable<T extends { id: string | number }>({
               setCurrentPage(1);
             }}
             placeholder={searchPlaceholder}
-            className="w-full pl-9 pr-4 py-2 text-sm bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-2 focus:ring-slate-900 focus:border-transparent transition-all shadow-sm"
+            className="w-full pl-9 pr-3 h-[36px] max-h-[36px] text-xs bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284] focus:border-transparent transition-all shadow-sm font-medium"
           />
         </div>
 
@@ -181,7 +178,7 @@ export function DataTable<T extends { id: string | number }>({
             variant="secondary"
             size="sm"
             onClick={handleExportExcel}
-            icon={<FileSpreadsheet className="w-4 h-4 text-emerald-600" />}
+            icon={<FileSpreadsheet className="w-3.5 h-3.5 text-emerald-600" />}
           >
             Export Excel
           </Button>
@@ -190,17 +187,17 @@ export function DataTable<T extends { id: string | number }>({
         </div>
       </div>
 
-      {/* Table Container */}
-      <div className="bg-white border border-slate-200/90 rounded-xl overflow-hidden shadow-[0_1px_3px_rgba(15,23,42,0.06)]">
+      {/* Table Container: Max radius 6px */}
+      <div className="bg-white border border-slate-200/90 rounded overflow-hidden shadow-sm">
         <div className="overflow-x-auto">
-          <table className="w-full text-left text-sm text-slate-600">
-            <thead className="bg-slate-50/80 text-xs font-semibold text-slate-700 uppercase tracking-wider border-b border-slate-200">
+          <table className="w-full text-left text-xs text-slate-600">
+            <thead className="bg-slate-50 text-[11px] font-medium text-slate-700 uppercase tracking-wider border-b border-slate-200">
               <tr>
                 {selectable && (
-                  <th className="px-4 py-3.5 w-10 text-center">
+                  <th className="px-3 py-2.5 w-10 text-center">
                     <input
                       type="checkbox"
-                      className="rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                      className="rounded border-slate-300 text-[#4E2284] focus:ring-[#4E2284]"
                       checked={paginatedData.length > 0 && paginatedData.every(i => selectedIds.has(i.id))}
                       onChange={handleSelectAll}
                     />
@@ -209,13 +206,13 @@ export function DataTable<T extends { id: string | number }>({
                 {columns.map((col, idx) => (
                   <th
                     key={idx}
-                    className={`px-4 py-3.5 ${col.sortable ? 'cursor-pointer select-none hover:text-slate-900' : ''} ${col.className || ''}`}
+                    className={`px-3 py-2.5 ${col.sortable ? 'cursor-pointer select-none hover:text-[#4E2284]' : ''} ${col.className || ''}`}
                     onClick={() => col.sortable && handleSort(col.accessorKey)}
                   >
-                    <div className="flex items-center gap-1.5">
+                    <div className="flex items-center gap-1.5 font-medium">
                       <span>{col.header}</span>
                       {col.sortable && (
-                        <ArrowUpDown className="w-3.5 h-3.5 text-slate-400 shrink-0" />
+                        <ArrowUpDown className="w-3 h-3 text-slate-400 shrink-0" />
                       )}
                     </div>
                   </th>
@@ -227,11 +224,11 @@ export function DataTable<T extends { id: string | number }>({
                 <tr>
                   <td
                     colSpan={columns.length + (selectable ? 1 : 0)}
-                    className="px-4 py-12 text-center text-slate-400"
+                    className="px-4 py-8 text-center text-slate-400"
                   >
                     <div className="flex flex-col items-center justify-center">
-                      <p className="font-medium text-slate-500">{emptyMessage}</p>
-                      <p className="text-xs text-slate-400 mt-1">Try adjusting your search criteria</p>
+                      <p className="font-medium text-slate-500 text-xs">{emptyMessage}</p>
+                      <p className="text-[11px] text-slate-400 mt-0.5">Try adjusting your search criteria</p>
                     </div>
                   </td>
                 </tr>
@@ -240,13 +237,13 @@ export function DataTable<T extends { id: string | number }>({
                   <tr
                     key={row.id}
                     onClick={() => onRowClick?.(row)}
-                    className={`hover:bg-slate-50/80 transition-colors ${onRowClick ? 'cursor-pointer' : ''} ${selectedIds.has(row.id) ? 'bg-blue-50/40' : ''}`}
+                    className={`hover:bg-slate-50/80 transition-colors ${onRowClick ? 'cursor-pointer' : ''} ${selectedIds.has(row.id) ? 'bg-[#4E2284]/5' : ''}`}
                   >
                     {selectable && (
-                      <td className="px-4 py-3.5 text-center">
+                      <td className="px-3 py-2.5 text-center">
                         <input
                           type="checkbox"
-                          className="rounded border-slate-300 text-slate-900 focus:ring-slate-900"
+                          className="rounded border-slate-300 text-[#4E2284] focus:ring-[#4E2284]"
                           checked={selectedIds.has(row.id)}
                           onClick={(e) => handleSelectRow(row, e)}
                           onChange={() => {}}
@@ -254,7 +251,7 @@ export function DataTable<T extends { id: string | number }>({
                       </td>
                     )}
                     {columns.map((col, cIdx) => (
-                      <td key={cIdx} className={`px-4 py-3.5 ${col.className || ''}`}>
+                      <td key={cIdx} className={`px-3 py-2.5 ${col.className || ''}`}>
                         {col.cell ? col.cell(row) : (col.accessorKey ? String(row[col.accessorKey] ?? '-') : '-')}
                       </td>
                     ))}
@@ -266,7 +263,7 @@ export function DataTable<T extends { id: string | number }>({
         </div>
 
         {/* Pagination Bar */}
-        <div className="px-4 py-3 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-3 text-xs text-slate-500">
+        <div className="px-3 py-2 border-t border-slate-100 bg-slate-50/50 flex flex-col sm:flex-row items-center justify-between gap-2 text-xs text-slate-500">
           <div className="flex items-center gap-2">
             <span>Showing</span>
             <select
@@ -275,7 +272,7 @@ export function DataTable<T extends { id: string | number }>({
                 setPageSize(Number(e.target.value));
                 setCurrentPage(1);
               }}
-              className="bg-white border border-slate-200 rounded px-2 py-1 focus:outline-none focus:ring-1 focus:ring-slate-900"
+              className="bg-white border border-slate-200 rounded px-2 h-[28px] max-h-[36px] text-xs font-medium focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
             >
               <option value={10}>10</option>
               <option value={25}>25</option>
@@ -291,16 +288,16 @@ export function DataTable<T extends { id: string | number }>({
             <button
               onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}
               disabled={currentPage === 1}
-              className="p-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed max-h-[36px]"
             >
-              <ChevronLeft className="w-4 h-4" />
+              <ChevronLeft className="w-3.5 h-3.5" />
             </button>
             <button
               onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}
               disabled={currentPage === totalPages}
-              className="p-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed"
+              className="p-1 rounded border border-slate-200 bg-white hover:bg-slate-50 disabled:opacity-40 disabled:cursor-not-allowed max-h-[36px]"
             >
-              <ChevronRight className="w-4 h-4" />
+              <ChevronRight className="w-3.5 h-3.5" />
             </button>
           </div>
         </div>
@@ -308,4 +305,3 @@ export function DataTable<T extends { id: string | number }>({
     </div>
   );
 }
-

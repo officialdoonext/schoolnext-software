@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Save, UserPlus, Upload, CheckCircle } from 'lucide-react';
-import { Student, SchoolClass, Section, AcademicYear, TransportRoute } from '@/types';
+import { ArrowLeft, Save, UserPlus, CheckCircle } from 'lucide-react';
+import { Student, SchoolClass, Section, TransportRoute } from '@/types';
 import { dbService } from '@/services/dbService';
 import { useSchool } from '@/context/SchoolContext';
 import { Card } from '@/components/common/Card';
@@ -9,7 +9,7 @@ import { Button } from '@/components/common/Button';
 
 export const StudentAdd: React.FC = () => {
   const navigate = useNavigate();
-  const { academicYears, selectedAcademicYear, refreshStats } = useSchool();
+  const { selectedAcademicYear, refreshStats } = useSchool();
   const [classes, setClasses] = useState<SchoolClass[]>([]);
   const [sections, setSections] = useState<Section[]>([]);
   const [routes, setRoutes] = useState<TransportRoute[]>([]);
@@ -174,7 +174,7 @@ export const StudentAdd: React.FC = () => {
       setSuccess(true);
       setTimeout(() => {
         navigate('/students');
-      }, 1200);
+      }, 1000);
     } catch (err) {
       console.error('Failed to register student:', err);
       alert('Failed to register student. Please check inputs.');
@@ -184,20 +184,20 @@ export const StudentAdd: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-5 max-w-5xl mx-auto font-sans">
       {/* Top Header */}
       <div className="flex items-center justify-between">
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2.5">
           <button
             onClick={() => navigate('/students')}
-            className="p-2 rounded-lg border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors"
+            className="p-1.5 rounded border border-slate-200 bg-white hover:bg-slate-50 text-slate-600 transition-colors max-h-[36px]"
           >
-            <ArrowLeft className="w-5 h-5" />
+            <ArrowLeft className="w-4 h-4" />
           </button>
           <div>
-            <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Student Admission Registration</h1>
-            <p className="text-slate-500 text-xs sm:text-sm mt-0.5">
-              Enter official student enrollment record and create student academic credentials.
+            <h1 className="text-xl font-medium text-slate-900 tracking-tight">Student Admission Registration</h1>
+            <p className="text-slate-500 text-xs mt-0.5">
+              Enter official student enrollment record and create student credentials.
             </p>
           </div>
         </div>
@@ -211,7 +211,7 @@ export const StudentAdd: React.FC = () => {
             size="sm"
             onClick={handleSubmit}
             loading={submitting}
-            icon={<Save className="w-4 h-4" />}
+            icon={<Save className="w-3.5 h-3.5" />}
           >
             Save Admission
           </Button>
@@ -219,19 +219,18 @@ export const StudentAdd: React.FC = () => {
       </div>
 
       {success && (
-        <div className="p-4 rounded-xl bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-3 animate-in fade-in">
-          <CheckCircle className="w-5 h-5 text-emerald-600" />
+        <div className="p-3 rounded bg-emerald-50 border border-emerald-200 text-emerald-800 flex items-center gap-2 text-xs">
+          <CheckCircle className="w-4 h-4 text-emerald-600" />
           <div>
-            <p className="font-semibold text-sm">Admission Successfully Registered!</p>
-            <p className="text-xs text-emerald-700">Redirecting to Student Directory...</p>
+            <span className="font-medium">Admission Successfully Registered!</span> Redirecting to directory...
           </div>
         </div>
       )}
 
-      <form onSubmit={handleSubmit} className="space-y-6">
+      <form onSubmit={handleSubmit} className="space-y-5">
         {/* Section 1: Academic & Admission Information */}
         <Card title="1. Academic & Admission Details" subtitle="Class placement and enrollment credentials">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
             <div>
               <label className="block font-medium text-slate-700 mb-1">Admission Number *</label>
               <input
@@ -240,7 +239,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.admissionNumber}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-slate-50 font-mono border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-slate-50 font-mono border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -252,7 +251,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.admissionDate}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -263,7 +262,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.classId}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               >
                 {classes.map(c => (
                   <option key={c.id} value={c.id}>{c.name}</option>
@@ -278,7 +277,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.sectionId}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               >
                 {sections.map(s => (
                   <option key={s.id} value={s.id}>Section {s.name}</option>
@@ -294,7 +293,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.rollNumber}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -306,7 +305,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.previousSchool}
                 onChange={handleChange}
                 placeholder="e.g. St. Xavier's School"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -318,7 +317,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.previousClass}
                 onChange={handleChange}
                 placeholder="e.g. Class 9"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -330,7 +329,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.tcNumber}
                 onChange={handleChange}
                 placeholder="TC-2025-992"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
           </div>
@@ -338,7 +337,7 @@ export const StudentAdd: React.FC = () => {
 
         {/* Section 2: Personal Student Information */}
         <Card title="2. Personal Student Details" subtitle="Identity, demographic and medical data">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4 text-xs">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-3 text-xs">
             <div>
               <label className="block font-medium text-slate-700 mb-1">First Name *</label>
               <input
@@ -347,8 +346,8 @@ export const StudentAdd: React.FC = () => {
                 value={formData.firstName}
                 onChange={handleChange}
                 required
-                placeholder="Student first name"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="First name"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -360,7 +359,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.middleName}
                 onChange={handleChange}
                 placeholder="Optional"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -372,8 +371,8 @@ export const StudentAdd: React.FC = () => {
                 value={formData.lastName}
                 onChange={handleChange}
                 required
-                placeholder="Student surname"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                placeholder="Surname"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -383,7 +382,7 @@ export const StudentAdd: React.FC = () => {
                 name="gender"
                 value={formData.gender}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               >
                 <option value="male">Male</option>
                 <option value="female">Female</option>
@@ -399,7 +398,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.dob}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -409,7 +408,7 @@ export const StudentAdd: React.FC = () => {
                 name="bloodGroup"
                 value={formData.bloodGroup}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               >
                 <option value="A+">A+</option>
                 <option value="A-">A-</option>
@@ -421,50 +420,12 @@ export const StudentAdd: React.FC = () => {
                 <option value="AB-">AB-</option>
               </select>
             </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Nationality</label>
-              <input
-                type="text"
-                name="nationality"
-                value={formData.nationality}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Category</label>
-              <select
-                name="category"
-                value={formData.category}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-              >
-                <option value="General">General</option>
-                <option value="OBC">OBC</option>
-                <option value="SC">SC</option>
-                <option value="ST">ST</option>
-                <option value="EWS">EWS</option>
-              </select>
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Mother Tongue</label>
-              <input
-                type="text"
-                name="motherTongue"
-                value={formData.motherTongue}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-              />
-            </div>
           </div>
         </Card>
 
         {/* Section 3: Parent & Guardian Details */}
-        <Card title="3. Parent & Guardian Contact" subtitle="Family contact details for fee notifications and emergencies">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+        <Card title="3. Parent & Guardian Contact" subtitle="Family contact details for fee notifications">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
             <div>
               <label className="block font-medium text-slate-700 mb-1">Father's Name *</label>
               <input
@@ -473,7 +434,7 @@ export const StudentAdd: React.FC = () => {
                 value={formData.fatherName}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -486,7 +447,7 @@ export const StudentAdd: React.FC = () => {
                 onChange={handleChange}
                 required
                 placeholder="+91 98765 43210"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284] font-mono"
               />
             </div>
 
@@ -497,51 +458,7 @@ export const StudentAdd: React.FC = () => {
                 name="fatherEmail"
                 value={formData.fatherEmail}
                 onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Father's Occupation</label>
-              <input
-                type="text"
-                name="fatherOccupation"
-                value={formData.fatherOccupation}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Mother's Name</label>
-              <input
-                type="text"
-                name="motherName"
-                value={formData.motherName}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Mother's Phone</label>
-              <input
-                type="tel"
-                name="motherPhone"
-                value={formData.motherPhone}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
-              />
-            </div>
-
-            <div>
-              <label className="block font-medium text-slate-700 mb-1">Mother's Occupation</label>
-              <input
-                type="text"
-                name="motherOccupation"
-                value={formData.motherOccupation}
-                onChange={handleChange}
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
 
@@ -553,17 +470,17 @@ export const StudentAdd: React.FC = () => {
                 value={formData.emergencyContact}
                 onChange={handleChange}
                 placeholder="Secondary phone"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284] font-mono"
               />
             </div>
           </div>
         </Card>
 
-        {/* Section 4: Residential Address */}
-        <Card title="4. Residential Address" subtitle="Communication and permanent home address">
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 text-xs">
+        {/* Section 4: Address */}
+        <Card title="4. Residential Address">
+          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs">
             <div className="sm:col-span-2">
-              <label className="block font-medium text-slate-700 mb-1">Current Street Address *</label>
+              <label className="block font-medium text-slate-700 mb-1">Street Address *</label>
               <input
                 type="text"
                 name="currentAddress"
@@ -571,10 +488,9 @@ export const StudentAdd: React.FC = () => {
                 onChange={handleChange}
                 required
                 placeholder="House / Flat No, Street, Society"
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
-
             <div>
               <label className="block font-medium text-slate-700 mb-1">City *</label>
               <input
@@ -583,10 +499,9 @@ export const StudentAdd: React.FC = () => {
                 value={formData.city}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284]"
               />
             </div>
-
             <div>
               <label className="block font-medium text-slate-700 mb-1">PIN Code *</label>
               <input
@@ -595,70 +510,18 @@ export const StudentAdd: React.FC = () => {
                 value={formData.pinCode}
                 onChange={handleChange}
                 required
-                className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900 font-mono"
+                className="w-full px-2.5 h-[36px] max-h-[36px] bg-white border border-slate-200 rounded focus:outline-none focus:ring-1 focus:ring-[#4E2284] font-mono"
               />
             </div>
-          </div>
-        </Card>
-
-        {/* Section 5: Transport Allocation */}
-        <Card title="5. Transport Requirement" subtitle="School bus commute allocation">
-          <div className="space-y-4 text-xs">
-            <div className="flex items-center gap-3">
-              <input
-                type="checkbox"
-                id="transportRequired"
-                name="transportRequired"
-                checked={formData.transportRequired}
-                onChange={handleChange}
-                className="w-4 h-4 rounded text-slate-900 focus:ring-slate-900 border-slate-300"
-              />
-              <label htmlFor="transportRequired" className="font-medium text-slate-800">
-                School Transport (Bus) Required
-              </label>
-            </div>
-
-            {formData.transportRequired && (
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-2">
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Assigned Route</label>
-                  <select
-                    name="transportRouteId"
-                    value={formData.transportRouteId}
-                    onChange={handleChange}
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-                  >
-                    <option value="">Select bus route</option>
-                    {routes.map(r => (
-                      <option key={r.id} value={r.id}>
-                        {r.routeName} ({r.routeCode}) - ₹{r.monthlyFee}/mo
-                      </option>
-                    ))}
-                  </select>
-                </div>
-
-                <div>
-                  <label className="block font-medium text-slate-700 mb-1">Pickup Stop / Landmark</label>
-                  <input
-                    type="text"
-                    name="pickupPoint"
-                    value={formData.pickupPoint}
-                    onChange={handleChange}
-                    placeholder="e.g. Society Main Gate"
-                    className="w-full px-3 py-2 bg-white border border-slate-200 rounded-lg focus:outline-none focus:ring-1 focus:ring-slate-900"
-                  />
-                </div>
-              </div>
-            )}
           </div>
         </Card>
 
         {/* Bottom Actions */}
-        <div className="flex justify-end gap-3 pt-4 border-t border-slate-200">
+        <div className="flex justify-end gap-2 pt-2 border-t border-slate-200">
           <Button variant="secondary" onClick={() => navigate('/students')} type="button">
             Cancel
           </Button>
-          <Button variant="primary" type="submit" loading={submitting} icon={<Save className="w-4 h-4" />}>
+          <Button variant="primary" type="submit" loading={submitting} icon={<Save className="w-3.5 h-3.5" />}>
             Submit Student Admission
           </Button>
         </div>
@@ -666,4 +529,3 @@ export const StudentAdd: React.FC = () => {
     </div>
   );
 };
-

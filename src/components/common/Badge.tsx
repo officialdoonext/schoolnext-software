@@ -19,7 +19,7 @@ export const Badge: React.FC<BadgeProps> = ({
     danger: 'bg-rose-50 text-rose-700 border-rose-200',
     info: 'bg-blue-50 text-blue-700 border-blue-200',
     neutral: 'bg-slate-100 text-slate-700 border-slate-200',
-    brand: 'bg-slate-900 text-white border-slate-900',
+    brand: 'bg-[#4E2284]/10 text-[#4E2284] border-[#4E2284]/20',
   };
 
   const dotStyles = {
@@ -28,19 +28,18 @@ export const Badge: React.FC<BadgeProps> = ({
     danger: 'bg-rose-500',
     info: 'bg-blue-500',
     neutral: 'bg-slate-400',
-    brand: 'bg-sky-400',
+    brand: 'bg-[#4E2284]',
   };
 
   const sizeStyles = {
-    sm: 'text-xs px-2 py-0.5',
-    md: 'text-xs px-2.5 py-1',
+    sm: 'text-[10px] px-1.5 py-0.5',
+    md: 'text-xs px-2 py-0.5',
   };
 
   return (
-    <span className={`inline-flex items-center gap-1.5 font-medium rounded-full border ${sizeStyles[size]} ${variantStyles[variant]}`}>
-      {dot && <span className={`w-1.5 h-1.5 rounded-full ${dotStyles[variant]}`} />}
+    <span className={`inline-flex items-center gap-1 font-medium rounded border ${sizeStyles[size]} ${variantStyles[variant]}`}>
+      {dot && <span className={`w-1.5 h-1.5 rounded ${dotStyles[variant]}`} />}
       {children}
     </span>
   );
 };
-
