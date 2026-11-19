@@ -1,0 +1,21 @@
+rules_version = '2';
+service firebase.storage {
+  match /b/{bucket}/o {
+    
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function isValidSize(maxSizeMB) {
+      return request.resource.size < maxSizeMB * 1024 * 1024;
+    }
+    
+    // Schools isolated assets
+    match /schools/{schoolId}/{allPaths=**} {
+      allow read: if isAuthenticated();
+      // Allow authenticated staff to upload images/documents up to 10MB
+      allow write: if isAuthenticated() && isValidSize(10);
+    }
+  }
+}
+

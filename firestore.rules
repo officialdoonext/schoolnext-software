@@ -1,0 +1,221 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Helper functions
+    function isAuthenticated() {
+      return request.auth != null;
+    }
+    
+    function getUserData() {
+      return get(/databases/$(database)/documents/users/$(request.auth.uid)).data;
+    }
+    
+    function isSuperAdmin() {
+      return isAuthenticated() && getUserData().role == 'super_admin';
+    }
+    
+    function isSchoolMember(schoolId) {
+      return isAuthenticated() && (
+        isSuperAdmin() || 
+        getUserData().schoolId == schoolId
+      );
+    }
+    
+    function hasRole(schoolId, allowedRoles) {
+      return isSchoolMember(schoolId) && (
+        isSuperAdmin() || 
+        getUserData().role in allowedRoles
+      );
+    }
+    
+    function isParentOf(studentId) {
+      return isAuthenticated() && 
+        getUserData().role == 'parent' && 
+        studentId in getUserData().linkedStudentIds;
+    }
+    
+    function isSelfStudent(studentId) {
+      return isAuthenticated() && 
+        getUserData().role == 'student' && 
+        getUserData().studentProfileId == studentId;
+    }
+    
+    // User collection rules
+    match /users/{userId} {
+      allow read: if isAuthenticated() && (request.auth.uid == userId || isSuperAdmin());
+      allow create: if isAuthenticated() && (request.auth.uid == userId || isSuperAdmin());
+      // Disallow updating sensitive role field unless super admin or school admin
+      allow update: if isAuthenticated() && (
+        isSuperAdmin() || 
+        (request.auth.uid == userId && !request.resource.data.diff(resource.data).affectedKeys().hasAny(['role', 'schoolId', 'permissions']))
+      );
+      allow delete: if isSuperAdmin();
+    }
+    
+    // School root and nested subcollections
+    match /schools/{schoolId} {
+      allow read: if isSchoolMember(schoolId);
+      allow write: if hasRole(schoolId, ['super_admin', 'school_admin']);
+      
+      // Academic Years
+      match /academicYears/{yearId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal']);
+      }
+      
+      // Classes & Sections
+      match /classes/{classId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal']);
+      }
+      
+      match /sections/{sectionId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal']);
+      }
+      
+      match /subjects/{subjectId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal']);
+      }
+      
+      // Students
+      match /students/{studentId} {
+        allow read: if isSchoolMember(schoolId);
+        allow create, update: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'receptionist']);
+        allow delete: if hasRole(schoolId, ['super_admin', 'school_admin']);
+      }
+      
+      // Staff
+      match /staff/{staffId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal']);
+      }
+      
+      // Attendance
+      match /attendance/{attendanceId} {
+        allow read: if isSchoolMember(schoolId);
+        allow create, update: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'teacher']);
+        allow delete: if hasRole(schoolId, ['super_admin', 'school_admin']);
+      }
+      
+      // Fees & Payments
+      match /fees/{feeId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'accountant']);
+      }
+      
+      match /feeStructures/{structureId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'accountant']);
+      }
+      
+      match /payments/{paymentId} {
+        allow read: if isSchoolMember(schoolId);
+        // Payments must be created by authorized finance staff and are immutable once posted
+        allow create: if hasRole(schoolId, ['super_admin', 'school_admin', 'accountant']);
+        allow update: if false; // Immutable audit trail
+        allow delete: if isSuperAdmin(); // Strict super admin only for corrections
+      }
+      
+      // Examinations & Results
+      match /examinations/{examId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'teacher']);
+      }
+      
+      match /results/{resultId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'teacher']);
+      }
+      
+      // Timetables
+      match /timetables/{timetableId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'teacher']);
+      }
+      
+      // Homework & Submissions
+      match /homework/{homeworkId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'teacher']);
+        
+        match /submissions/{submissionId} {
+          allow read: if isSchoolMember(schoolId);
+          allow write: if isAuthenticated();
+        }
+      }
+      
+      // Announcements & Notice Board
+      match /announcements/{announcementId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'teacher']);
+      }
+      
+      // Transport
+      match /transportVehicles/{vehicleId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'transport_manager']);
+      }
+      
+      match /transportRoutes/{routeId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'transport_manager']);
+      }
+      
+      // Library
+      match /libraryBooks/{bookId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'librarian']);
+      }
+      
+      match /libraryTransactions/{transactionId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'librarian']);
+      }
+      
+      // Inventory
+      match /inventory/{itemId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin']);
+      }
+      
+      // Front Office
+      match /enquiries/{enquiryId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'receptionist']);
+      }
+      
+      match /visitors/{visitorId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'receptionist']);
+      }
+      
+      // Expenses & Payroll
+      match /expenses/{expenseId} {
+        allow read: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'accountant']);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'accountant']);
+      }
+      
+      match /payroll/{payrollId} {
+        allow read: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal', 'accountant']);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin', 'accountant']);
+      }
+      
+      // Settings
+      match /settings/{settingId} {
+        allow read: if isSchoolMember(schoolId);
+        allow write: if hasRole(schoolId, ['super_admin', 'school_admin']);
+      }
+      
+      // Immutable Audit Logs
+      match /auditLogs/{logId} {
+        allow read: if hasRole(schoolId, ['super_admin', 'school_admin', 'principal']);
+        allow create: if isSchoolMember(schoolId);
+        allow update, delete: if false; // Append-only audit log
+      }
+    }
+  }
+}
+
