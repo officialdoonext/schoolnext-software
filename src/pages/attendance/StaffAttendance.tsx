@@ -15,11 +15,17 @@ export const StaffAttendance: React.FC = () => {
   useEffect(() => {
     const fetchStaff = async () => {
       const list = await dbService.getCollection<Staff>('staff');
+      const existing = await dbService.getCollection<StaffAttendanceRecord>('staffAttendance');
+      const dayRecords = existing.filter(r => r.date === selectedDate);
       setStaffList(list);
 
       const map: Record<string, { status: AttendanceStatus; checkIn: string }> = {};
       list.forEach(s => {
-        map[s.id] = { status: 'present', checkIn: '08:00 AM' };
+        const found = dayRecords.find(r => r.staffId === s.id);
+        map[s.id] = {
+          status: found ? found.status : 'present',
+          checkIn: found?.checkInTime || '08:00 AM'
+        };
       });
       setAttendanceMap(map);
     };
@@ -36,20 +42,27 @@ export const StaffAttendance: React.FC = () => {
   const handleSave = async () => {
     setSaving(true);
     try {
-      const records: StaffAttendanceRecord[] = staffList.map(s => ({
-        id: `att_staff_${s.id}_${selectedDate}`,
-        schoolId: 'school_next_main_01',
-        staffId: s.id,
-        staffName: s.fullName,
-        employeeId: s.employeeId,
-        date: selectedDate,
-        status: attendanceMap[s.id]?.status || 'present',
-        checkInTime: attendanceMap[s.id]?.checkIn || '08:00 AM',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      }));
+      const existing = await dbService.getCollection<StaffAttendanceRecord>('staffAttendance');
+      const dayRecords = existing.filter(r => r.date === selectedDate);
 
-      localStorage.setItem('school_next_db_staff_attendance', JSON.stringify(records));
+      for (const s of staffList) {
+        const found = dayRecords.find(r => r.staffId === s.id);
+        const recordData = {
+          staffId: s.id,
+          staffName: s.fullName,
+          employeeId: s.employeeId,
+          date: selectedDate,
+          status: attendanceMap[s.id]?.status || 'present',
+          checkInTime: attendanceMap[s.id]?.checkIn || '08:00 AM',
+        };
+
+        if (found) {
+          await dbService.updateDocument('staffAttendance', found.id, recordData);
+        } else {
+          await dbService.createDocument('staffAttendance', recordData);
+        }
+      }
+
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } finally {
@@ -58,7 +71,7 @@ export const StaffAttendance: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Staff & Faculty Attendance</h1>

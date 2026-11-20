@@ -31,57 +31,7 @@ export const HomeworkList: React.FC = () => {
 
       setClasses(cls);
       setSubjects(sub);
-
-      if (hw.length === 0) {
-        // Sample initial homework
-        const sample: Homework[] = [
-          {
-            id: 'hw_1',
-            schoolId: 'school_next_main_01',
-            academicYearId: 'ay_2026_2027',
-            classId: 'cls_10',
-            className: 'Class 10',
-            sectionId: 'sec_10_a',
-            sectionName: 'A',
-            subjectId: 'sub_10_math',
-            subjectName: 'Mathematics',
-            assignedTeacherId: 'staff_2',
-            assignedTeacherName: 'Priya Sharma',
-            title: 'Quadratic Equations Exercise 4.2',
-            description: 'Solve questions 1 to 8 on factorization methods and nature of roots.',
-            assignedDate: '2026-05-02',
-            dueDate: '2026-05-12',
-            maxMarks: 25,
-            status: 'active',
-            createdAt: '2026-05-02T10:00:00.000Z',
-            updatedAt: '2026-05-02T10:00:00.000Z',
-          },
-          {
-            id: 'hw_2',
-            schoolId: 'school_next_main_01',
-            academicYearId: 'ay_2026_2027',
-            classId: 'cls_10',
-            className: 'Class 10',
-            sectionId: 'sec_10_a',
-            sectionName: 'A',
-            subjectId: 'sub_10_sci',
-            subjectName: 'Science',
-            assignedTeacherId: 'staff_3',
-            assignedTeacherName: 'Amit Verma',
-            title: 'Chemical Reactions & Equations Lab Writeup',
-            description: 'Complete the balanced oxidation-reduction reaction equations in the practical lab journal.',
-            assignedDate: '2026-05-04',
-            dueDate: '2026-05-14',
-            maxMarks: 20,
-            status: 'active',
-            createdAt: '2026-05-04T11:00:00.000Z',
-            updatedAt: '2026-05-04T11:00:00.000Z',
-          }
-        ];
-        setHomeworkList(sample);
-      } else {
-        setHomeworkList(hw);
-      }
+      setHomeworkList(hw);
     };
     load();
   }, []);
@@ -118,7 +68,7 @@ export const HomeworkList: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Homework & Assignments</h1>

@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import React, { useState, useRef } from 'react';
+import { createPortal } from 'react-dom';
+import { NavLink, useLocation, useNavigate } from 'react-router-dom';
 import { 
   LayoutDashboard, 
   Users, 
@@ -10,7 +11,6 @@ import {
   Briefcase, 
   Clock, 
   BookOpen, 
-  Bell, 
   Bus, 
   BookMarked, 
   Package, 
@@ -19,7 +19,6 @@ import {
   Settings, 
   ChevronDown, 
   ChevronRight,
-  ShieldCheck,
   UserCheck,
   PanelLeftClose,
   PanelLeft
@@ -51,14 +50,46 @@ export const Sidebar: React.FC<SidebarProps> = ({
   const { currentUser } = useAuth();
   const { school } = useSchool();
   const location = useLocation();
-  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({
-    students: true,
-    academics: false,
-    fees: false,
-  });
+  const navigate = useNavigate();
+
+  // Open all menus by default
+  const [openSubmenus, setOpenSubmenus] = useState<Record<string, boolean>>({});
+
+  // Track hovered item for portal popover in collapsed mode
+  const [hoveredIndex, setHoveredIndex] = useState<number | null>(null);
+  const [popoverTop, setPopoverTop] = useState<number>(0);
+  const hoverTimeoutRef = useRef<ReturnType<typeof setTimeout> | null>(null);
+
+  const handleMouseEnter = (e: React.MouseEvent<HTMLDivElement>, idx: number) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    const rect = e.currentTarget.getBoundingClientRect();
+    const maxTop = window.innerHeight - 280;
+    const computedTop = Math.max(10, Math.min(rect.top, maxTop));
+    setPopoverTop(computedTop);
+    setHoveredIndex(idx);
+  };
+
+  const handleMouseLeave = () => {
+    hoverTimeoutRef.current = setTimeout(() => {
+      setHoveredIndex(null);
+    }, 120);
+  };
+
+  const handlePopoverMouseEnter = () => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+  };
 
   const toggleSubmenu = (key: string) => {
-    setOpenSubmenus(prev => ({ ...prev, [key]: !prev[key] }));
+    setOpenSubmenus(prev => {
+      const current = prev[key] !== undefined ? prev[key] : true;
+      return { ...prev, [key]: !current };
+    });
   };
 
   const menuItems: MenuItem[] = [
@@ -224,6 +255,16 @@ export const Sidebar: React.FC<SidebarProps> = ({
     return item.allowedRoles.includes(userRole);
   });
 
+  const handleSubitemClick = (path: string) => {
+    if (hoverTimeoutRef.current) {
+      clearTimeout(hoverTimeoutRef.current);
+      hoverTimeoutRef.current = null;
+    }
+    setHoveredIndex(null);
+    onCloseMobile();
+    navigate(path);
+  };
+
   return (
     <>
       {/* Mobile Backdrop */}
@@ -237,39 +278,165 @@ export const Sidebar: React.FC<SidebarProps> = ({
       {/* Sidebar - Pure White Background */}
       <aside
         className={`fixed top-0 bottom-0 left-0 z-40 flex flex-col bg-white text-slate-700 transition-all duration-200 ease-in-out border-r border-slate-200 shadow-sm lg:static ${
-          collapsed ? 'w-20' : 'w-64'
+          collapsed ? 'w-[68px]' : 'w-64'
         } ${mobileOpen ? 'translate-x-0' : '-translate-x-full lg:translate-x-0'}`}
       >
         {/* Brand Header */}
-        <div className="h-16 flex items-center justify-between px-4 border-b border-slate-100 bg-white">
-          <div className="flex items-center gap-3 overflow-hidden">
-            <div className="w-9 h-9 rounded bg-[#4E2284] flex items-center justify-center shrink-0 shadow-sm">
-              <span className="font-medium text-white text-base tracking-wider">SN</span>
-            </div>
-            {!collapsed && (
-              <div className="flex flex-col truncate">
-                <span className="font-medium text-slate-900 tracking-tight text-sm leading-tight">School Next</span>
-                <span className="text-[10px] text-[#4E2284] font-medium uppercase tracking-wider truncate">Enterprise ERP</span>
+        <div className={`h-14 max-h-[56px] flex items-center border-b border-slate-100 bg-white ${
+          collapsed ? 'justify-center px-2' : 'justify-between px-4'
+        }`}>
+          {collapsed ? (
+            /* Clean centered logo with hover toggle in collapsed mode */
+            <button
+              onClick={onToggleCollapse}
+              title="Expand Sidebar"
+              className="w-9 h-9 rounded bg-[#4E2284] flex items-center justify-center text-white font-medium text-xs shadow-sm hover:opacity-90 transition-opacity"
+            >
+              SN
+            </button>
+          ) : (
+            <>
+              <div className="flex items-center gap-2.5 overflow-hidden">
+                <div className="w-8 h-8 rounded bg-[#4E2284] flex items-center justify-center shrink-0 shadow-sm">
+                  <span className="font-medium text-white text-xs tracking-wider">SN</span>
+                </div>
+                <div className="flex flex-col truncate">
+                  <span className="font-medium text-slate-900 tracking-tight text-xs leading-tight">School Next</span>
+                  <span className="text-[10px] text-[#4E2284] font-medium uppercase tracking-wider truncate">Enterprise ERP</span>
+                </div>
               </div>
-            )}
-          </div>
 
-          <button
-            onClick={onToggleCollapse}
-            className="hidden lg:flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
-          >
-            {collapsed ? <PanelLeft className="w-4 h-4" /> : <PanelLeftClose className="w-4 h-4" />}
-          </button>
+              <button
+                onClick={onToggleCollapse}
+                title="Collapse Sidebar"
+                className="hidden lg:flex items-center justify-center w-7 h-7 rounded text-slate-400 hover:text-slate-700 hover:bg-slate-100 transition-colors"
+              >
+                <PanelLeftClose className="w-4 h-4" />
+              </button>
+            </>
+          )}
         </div>
 
         {/* Navigation Links */}
-        <div className="flex-1 overflow-y-auto px-3 py-3 space-y-1 custom-scrollbar">
+        <div className={`flex-1 overflow-y-auto py-2.5 space-y-1 custom-scrollbar ${collapsed ? 'px-2' : 'px-3'}`}>
           {visibleItems.map((item, idx) => {
             const hasSub = item.subItems && item.subItems.length > 0;
             const subKey = item.title.toLowerCase().replace(/[^a-z0-9]/g, '');
-            const isOpen = openSubmenus[subKey];
+            const isOpen = openSubmenus[subKey] !== undefined ? openSubmenus[subKey] : true;
             const isAnySubActive = hasSub && item.subItems?.some(s => location.pathname === s.path);
+            const isDirectActive = item.path ? location.pathname === item.path : false;
+            const isHovered = hoveredIndex === idx;
 
+            // --- COLLAPSED MODE: Clean icons with floating popover submenus on hover ---
+            if (collapsed) {
+              return (
+                <div
+                  key={idx}
+                  className="relative group flex justify-center"
+                  onMouseEnter={(e) => handleMouseEnter(e, idx)}
+                  onMouseLeave={handleMouseLeave}
+                >
+                  {/* Collapsed Icon Button */}
+                  {hasSub ? (
+                    <button
+                      type="button"
+                      onClick={(e) => {
+                        if (isHovered) {
+                          setHoveredIndex(null);
+                        } else {
+                          handleMouseEnter(e as any, idx);
+                        }
+                      }}
+                      className={`w-10 h-10 flex items-center justify-center rounded text-xs font-medium transition-colors max-h-[36px] ${
+                        isAnySubActive
+                          ? 'bg-[#4E2284]/10 text-[#4E2284]'
+                          : isHovered
+                          ? 'bg-slate-100 text-[#4E2284]'
+                          : 'text-slate-600 hover:text-[#4E2284] hover:bg-[#4E2284]/5'
+                      }`}
+                    >
+                      {item.icon}
+                    </button>
+                  ) : (
+                    <NavLink
+                      to={item.path!}
+                      onClick={onCloseMobile}
+                      className={({ isActive }) =>
+                        `w-10 h-10 flex items-center justify-center rounded text-xs font-medium transition-colors max-h-[36px] ${
+                          isActive
+                            ? 'bg-[#4E2284] text-white shadow-sm'
+                            : isHovered
+                            ? 'bg-slate-100 text-[#4E2284]'
+                            : 'text-slate-600 hover:text-[#4E2284] hover:bg-[#4E2284]/5'
+                        }`
+                      }
+                    >
+                      {item.icon}
+                    </NavLink>
+                  )}
+
+                  {/* Floating Popover on Hover via React Portal to Document Body (Always on top of EVERYTHING) */}
+                  {isHovered && typeof document !== 'undefined' && createPortal(
+                    <div
+                      style={{ top: `${popoverTop}px`, left: '72px' }}
+                      className="fixed z-[99999] min-w-[210px] w-56 bg-white rounded border border-slate-200 shadow-2xl py-1.5 animate-in fade-in duration-100 before:content-[''] before:absolute before:-left-4 before:top-0 before:bottom-0 before:w-5"
+                      onMouseEnter={handlePopoverMouseEnter}
+                      onMouseLeave={handleMouseLeave}
+                    >
+                      {/* Popover Header Title */}
+                      <div className="px-3.5 py-2 border-b border-slate-100 bg-slate-50 flex items-center justify-between">
+                        <span className="text-xs font-medium text-slate-900">{item.title}</span>
+                        {item.path && (
+                          <button
+                            onClick={() => handleSubitemClick(item.path!)}
+                            className="text-[10px] text-[#4E2284] font-medium hover:underline cursor-pointer"
+                          >
+                            Open
+                          </button>
+                        )}
+                      </div>
+
+                      {/* Popover Submenu Items */}
+                      {hasSub ? (
+                        <div className="py-1">
+                          {item.subItems
+                            ?.filter(sub => !sub.allowedRoles || sub.allowedRoles.includes(userRole))
+                            .map((sub, sIdx) => {
+                              const isActive = location.pathname === sub.path;
+                              return (
+                                <button
+                                  key={sIdx}
+                                  onClick={() => handleSubitemClick(sub.path)}
+                                  className={`w-full text-left px-3.5 py-1.5 text-xs font-medium transition-colors flex items-center justify-between cursor-pointer ${
+                                    isActive
+                                      ? 'text-[#4E2284] bg-[#4E2284]/10'
+                                      : 'text-slate-600 hover:text-[#4E2284] hover:bg-slate-50'
+                                  }`}
+                                >
+                                  <span>{sub.title}</span>
+                                  {isActive && <span className="w-1.5 h-1.5 rounded-full bg-[#4E2284]" />}
+                                </button>
+                              );
+                            })}
+                        </div>
+                      ) : (
+                        <div className="p-2">
+                          <button
+                            onClick={() => handleSubitemClick(item.path!)}
+                            className="w-full text-left px-2.5 py-1.5 rounded text-xs font-medium text-[#4E2284] hover:bg-[#4E2284]/5 cursor-pointer"
+                          >
+                            Go to {item.title} →
+                          </button>
+                        </div>
+                      )}
+                    </div>,
+                    document.body
+                  )}
+                </div>
+              );
+            }
+
+            // --- EXPANDED MODE ---
             if (!hasSub) {
               return (
                 <NavLink
@@ -283,16 +450,15 @@ export const Sidebar: React.FC<SidebarProps> = ({
                         : 'text-slate-600 hover:text-[#4E2284] hover:bg-[#4E2284]/5'
                     }`
                   }
-                  title={collapsed ? item.title : undefined}
                 >
                   {item.icon}
-                  {!collapsed && <span className="truncate">{item.title}</span>}
+                  <span className="truncate">{item.title}</span>
                 </NavLink>
               );
             }
 
             return (
-              <div key={idx} className="space-y-1">
+              <div key={idx} className="space-y-0.5">
                 <button
                   onClick={() => toggleSubmenu(subKey)}
                   className={`w-full flex items-center justify-between px-3 py-2 rounded text-xs font-medium transition-colors max-h-[36px] ${
@@ -300,22 +466,19 @@ export const Sidebar: React.FC<SidebarProps> = ({
                       ? 'text-[#4E2284] bg-[#4E2284]/10'
                       : 'text-slate-600 hover:text-[#4E2284] hover:bg-[#4E2284]/5'
                   }`}
-                  title={collapsed ? item.title : undefined}
                 >
                   <div className="flex items-center gap-2.5 truncate">
                     {item.icon}
-                    {!collapsed && <span className="truncate">{item.title}</span>}
+                    <span className="truncate">{item.title}</span>
                   </div>
-                  {!collapsed && (
-                    <span className="text-slate-400">
-                      {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
-                    </span>
-                  )}
+                  <span className="text-slate-400">
+                    {isOpen ? <ChevronDown className="w-3.5 h-3.5" /> : <ChevronRight className="w-3.5 h-3.5" />}
+                  </span>
                 </button>
 
                 {/* Submenu links */}
-                {isOpen && !collapsed && (
-                  <div className="pl-8 pr-1 py-1 space-y-0.5 border-l border-slate-200 ml-4 my-1">
+                {isOpen && (
+                  <div className="pl-8 pr-1 py-0.5 space-y-0.5 border-l border-slate-200 ml-4 my-0.5">
                     {item.subItems
                       ?.filter(sub => !sub.allowedRoles || sub.allowedRoles.includes(userRole))
                       .map((sub, sIdx) => {
@@ -327,7 +490,7 @@ export const Sidebar: React.FC<SidebarProps> = ({
                             onClick={onCloseMobile}
                             className={`block py-1.5 px-2.5 rounded text-[11px] font-medium transition-colors ${
                               isActive
-                                ? 'text-[#4E2284] bg-[#4E2284]/10 font-medium'
+                                ? 'text-[#4E2284] bg-[#4E2284]/10'
                                 : 'text-slate-500 hover:text-slate-900 hover:bg-slate-50'
                             }`}
                           >
@@ -343,12 +506,24 @@ export const Sidebar: React.FC<SidebarProps> = ({
         </div>
 
         {/* Footer info */}
-        {!collapsed && (
-          <div className="p-3 border-t border-slate-100 bg-slate-50/60 text-[11px] text-slate-500 flex items-center justify-between">
-            <span className="truncate">{school?.name || 'School Next'}</span>
-            <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[#4E2284] text-[10px] font-medium">v1.0</span>
-          </div>
-        )}
+        <div className={`p-2.5 border-t border-slate-100 bg-slate-50/60 text-[11px] text-slate-500 flex items-center ${
+          collapsed ? 'justify-center' : 'justify-between'
+        }`}>
+          {collapsed ? (
+            <button
+              onClick={onToggleCollapse}
+              title="Expand Sidebar"
+              className="p-1 rounded hover:bg-slate-200 text-slate-500 hover:text-slate-800 transition-colors"
+            >
+              <PanelLeft className="w-4 h-4" />
+            </button>
+          ) : (
+            <>
+              <span className="truncate">{school?.name || 'School Next'}</span>
+              <span className="px-1.5 py-0.5 rounded bg-white border border-slate-200 text-[#4E2284] text-[10px] font-medium">v1.0</span>
+            </>
+          )}
+        </div>
       </aside>
     </>
   );

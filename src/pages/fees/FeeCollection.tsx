@@ -30,10 +30,10 @@ export const FeeCollection: React.FC = () => {
   const [receiptNumber, setReceiptNumber] = useState<string>(`RCP-2026-${Math.floor(1000 + Math.random() * 9000)}`);
   const [discount, setDiscount] = useState<number>(0);
   const [lateFee, setLateFee] = useState<number>(0);
-  const [amountPaid, setAmountPaid] = useState<number>(28500);
-  const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'UPI' | 'Bank Transfer' | 'Card' | 'Cheque'>('UPI');
-  const [transactionReference, setTransactionReference] = useState<string>('UPI/5129384729/HDFC');
-  const [remarks, setRemarks] = useState<string>('Term fee collection');
+  const [amountPaid, setAmountPaid] = useState<number>(0);
+  const [paymentMethod, setPaymentMethod] = useState<'Cash' | 'UPI' | 'Bank Transfer' | 'Card' | 'Cheque'>('Cash');
+  const [transactionReference, setTransactionReference] = useState<string>('');
+  const [remarks, setRemarks] = useState<string>('');
 
   const [saving, setSaving] = useState(false);
   const [receiptModalOpen, setReceiptModalOpen] = useState(false);
@@ -123,7 +123,7 @@ export const FeeCollection: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto font-sans">
+    <div className="space-y-5 w-full font-sans">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-xl font-medium text-slate-900 tracking-tight">Fee Collection & Counter</h1>

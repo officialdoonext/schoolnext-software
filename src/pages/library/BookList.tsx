@@ -120,7 +120,7 @@ export const BookList: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Library Catalog & Book Circulation</h1>

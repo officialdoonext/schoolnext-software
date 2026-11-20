@@ -26,21 +26,22 @@ export const AttendanceReports: React.FC = () => {
     const generateReports = async () => {
       const cls = await dbService.getCollection<SchoolClass>('classes');
       const students = await dbService.getCollection<Student>('students');
+      const attendance = await dbService.getCollection<any>('attendance');
       setClasses(cls);
 
-      // Generate realistic dynamic attendance summaries based on active students
-      const rows: AttendanceSummaryRow[] = students.map((s, idx) => {
-        const total = 120;
-        // give realistic 90-98% attendance
-        const present = Math.min(total, total - (idx % 6));
-        const absent = total - present;
-        const percentage = Math.round((present / total) * 100);
+      // Calculate 100% dynamic attendance summaries based on real attendance records
+      const rows: AttendanceSummaryRow[] = students.map((s) => {
+        const studentRecords = attendance.filter((a: any) => a.studentId === s.id);
+        const total = studentRecords.length;
+        const present = studentRecords.filter((a: any) => a.status === 'present' || a.status === 'late' || a.status === 'half_day').length;
+        const absent = studentRecords.filter((a: any) => a.status === 'absent').length;
+        const percentage = total > 0 ? Math.round((present / total) * 100) : 0;
 
         return {
           id: s.id,
           admissionNumber: s.admissionNumber,
           studentName: s.fullName,
-          className: `${s.className} (${s.sectionName})`,
+          className: `${s.className || ''} (${s.sectionName || ''})`,
           totalDays: total,
           presentDays: present,
           absentDays: absent,
@@ -107,7 +108,7 @@ export const AttendanceReports: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Attendance Analytics & Reports</h1>

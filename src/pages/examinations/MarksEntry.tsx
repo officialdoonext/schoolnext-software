@@ -44,14 +44,24 @@ export const MarksEntry: React.FC = () => {
     const loadStudents = async () => {
       if (!selectedClassId) return;
       const allStudents = await dbService.getCollection<Student>('students');
+      const allMarks = await dbService.getCollection<any>('marks');
       const filtered = allStudents.filter(s => s.classId === selectedClassId && s.status === 'active');
       setStudents(filtered);
 
       const map: Record<string, { marks: number; isAbsent: boolean; remarks: string }> = {};
-      filtered.forEach((s, idx) => {
-        // sample realistic marks
-        const sampleMarks = [88, 92, 78, 85, 95, 68, 82, 91][idx % 8];
-        map[s.id] = { marks: sampleMarks, isAbsent: false, remarks: 'Good performance' };
+      filtered.forEach((s) => {
+        const existing = allMarks.find(
+          (m: any) => m.studentId === s.id && m.examTypeId === selectedExamTypeId && m.subjectId === selectedSubjectId
+        );
+        if (existing) {
+          map[s.id] = {
+            marks: Number(existing.marksObtained) || 0,
+            isAbsent: !!existing.isAbsent,
+            remarks: existing.remarks || '',
+          };
+        } else {
+          map[s.id] = { marks: 0, isAbsent: false, remarks: '' };
+        }
       });
       setMarksMap(map);
     };
@@ -118,7 +128,23 @@ export const MarksEntry: React.FC = () => {
         };
       });
 
-      localStorage.setItem('school_next_db_marks', JSON.stringify(records));
+      const existingMarks = await dbService.getCollection<any>('marks');
+      for (const record of records) {
+        const found = existingMarks.find(
+          (m: any) => m.studentId === record.studentId && (m.examScheduleId === record.examScheduleId || m.examTypeId === selectedExamTypeId) && m.subjectId === record.subjectId
+        );
+        if (found) {
+          await dbService.updateDocument('marks', found.id, {
+            ...record,
+            marksObtained: record.obtainedMarks,
+          });
+        } else {
+          await dbService.createDocument('marks', {
+            ...record,
+            marksObtained: record.obtainedMarks,
+          });
+        }
+      }
       setSavedSuccess(true);
       setTimeout(() => setSavedSuccess(false), 3000);
     } finally {
@@ -127,7 +153,7 @@ export const MarksEntry: React.FC = () => {
   };
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Examination Marks Entry</h1>

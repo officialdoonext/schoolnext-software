@@ -33,26 +33,25 @@ export const PendingFees: React.FC = () => {
       const payments = await dbService.getCollection<FeePayment>('payments');
       const structures = await dbService.getCollection<FeeStructure>('feeStructures');
 
-      const standardFee = structures[0]?.totalAmount || 28500;
-
-      const rows: PendingFeeRow[] = students.map((s, idx) => {
+      const rows: PendingFeeRow[] = students.map((s) => {
+        const classStructure = structures.find(st => st.classId === s.classId) || structures[0];
+        const studentFee = classStructure ? Number(classStructure.totalAmount) : 0;
         const studentPayments = payments.filter(p => p.studentId === s.id);
         const paidFee = studentPayments.reduce((sum, p) => sum + (Number(p.amountPaid) || 0), 0);
-        // compute due
-        const dueAmount = Math.max(0, standardFee - paidFee);
+        const dueAmount = Math.max(0, studentFee - paidFee);
 
         return {
           id: s.id,
           studentId: s.id,
           admissionNumber: s.admissionNumber,
           studentName: s.fullName,
-          className: `${s.className} (${s.sectionName})`,
+          className: `${s.className || ''} (${s.sectionName || ''})`,
           fatherName: s.fatherName,
           fatherPhone: s.fatherPhone,
-          totalFee: standardFee,
+          totalFee: studentFee,
           paidFee,
-          dueAmount: dueAmount > 0 ? dueAmount : (idx % 2 === 0 ? 0 : 28500),
-          dueDate: '2026-05-10',
+          dueAmount,
+          dueDate: classStructure?.dueDate || 'Due on Term Start',
         };
       }).filter(r => r.dueAmount > 0);
 
@@ -139,7 +138,7 @@ export const PendingFees: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Pending Dues & Defaulters</h1>

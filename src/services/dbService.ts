@@ -95,9 +95,7 @@ class DatabaseService {
       try {
         const colRef = collection(db, 'schools', schoolId, collectionName);
         const snapshot = await getDocs(colRef);
-        if (!snapshot.empty) {
-          return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as T));
-        }
+        return snapshot.docs.map(doc => ({ id: doc.id, ...doc.data() } as unknown as T));
       } catch (err) {
         console.warn(`Firestore read fallback for ${collectionName}:`, err);
       }

@@ -70,25 +70,31 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
     const classes = await dbService.getCollection<any>('classes');
     const payments = await dbService.getCollection<any>('payments');
     const feeStructures = await dbService.getCollection<any>('feeStructures');
+    const attendance = await dbService.getCollection<any>('attendance');
 
     const totalStudents = students.filter(s => s.status === 'active').length;
     const totalStaff = staff.filter(s => s.status === 'active').length;
     const totalTeachers = staff.filter(s => s.role === 'teacher' && s.status === 'active').length;
     const totalClasses = classes.filter(c => c.status === 'active').length;
 
-    // Financial calculations
+    // Real dynamic fee calculations
     const todayStr = new Date().toISOString().split('T')[0];
     const todayFeeCollection = payments
-      .filter((p: any) => p.paymentDate === todayStr || p.paymentDate?.startsWith('2026-05'))
+      .filter((p: any) => p.paymentDate === todayStr)
       .reduce((sum: number, p: any) => sum + (Number(p.amountPaid) || 0), 0);
 
     const totalExpectedFee = feeStructures.reduce((sum: number, f: any) => sum + (Number(f.totalAmount) * totalStudents || 0), 0);
     const totalCollectedFee = payments.reduce((sum: number, p: any) => sum + (Number(p.amountPaid) || 0), 0);
     const pendingFees = Math.max(0, totalExpectedFee - totalCollectedFee);
 
-    // Present / Absent estimate
-    const presentStudents = Math.round(totalStudents * 0.94);
-    const absentStudents = totalStudents - presentStudents;
+    // Dynamic real attendance for today or latest session
+    const todayAttendance = attendance.filter((a: any) => a.date === todayStr);
+    const presentStudents = todayAttendance.filter((a: any) => a.status === 'present' || a.status === 'late' || a.status === 'half_day').length;
+    const absentStudents = todayAttendance.filter((a: any) => a.status === 'absent').length;
+
+    // Dynamic new admissions (enrolled in current academic year)
+    const currentYear = new Date().getFullYear().toString();
+    const newAdmissions = students.filter((s: any) => s.admissionDate?.startsWith(currentYear)).length;
 
     setStats({
       totalStudents,
@@ -99,7 +105,7 @@ export const SchoolProvider: React.FC<{ children: React.ReactNode }> = ({ childr
       absentStudents,
       todayFeeCollection,
       pendingFees,
-      newAdmissions: students.filter((s: any) => s.admissionDate?.startsWith('2026')).length || 24,
+      newAdmissions,
     });
   };
 

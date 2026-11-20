@@ -30,7 +30,7 @@ export const StudentIdCards: React.FC = () => {
     : students.filter(s => s.id === selectedStudentId);
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Control Bar - hidden during print */}
       <div className="print:hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <div>

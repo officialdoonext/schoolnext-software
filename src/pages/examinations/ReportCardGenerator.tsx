@@ -12,12 +12,16 @@ export const ReportCardGenerator: React.FC = () => {
   const [subjects, setSubjects] = useState<Subject[]>([]);
   const [selectedStudentId, setSelectedStudentId] = useState<string>('');
 
+  const [marks, setMarks] = useState<any[]>([]);
+
   useEffect(() => {
     const load = async () => {
       const stdList = await dbService.getCollection<Student>('students');
       const subList = await dbService.getCollection<Subject>('subjects');
+      const marksList = await dbService.getCollection<any>('marks');
       setStudents(stdList);
       setSubjects(subList);
+      setMarks(marksList);
       if (stdList.length > 0) setSelectedStudentId(stdList[0].id);
     };
     load();
@@ -25,10 +29,22 @@ export const ReportCardGenerator: React.FC = () => {
 
   const activeStudent = students.find(s => s.id === selectedStudentId);
 
-  // Dynamic sample marks for student report card
-  const sampleSubjectMarks = subjects.map((sub, idx) => {
-    const marksObtained = [94, 88, 92, 85, 96, 90][idx % 6];
-    const grade = marksObtained >= 91 ? 'A1' : marksObtained >= 81 ? 'A2' : 'B1';
+  // Dynamic real marks from database
+  const subjectMarks = subjects.map((sub) => {
+    const record = marks.find(m => m.studentId === selectedStudentId && m.subjectId === sub.id);
+    const marksObtained = record ? Number(record.marksObtained) : null;
+    let grade = '--';
+    if (marksObtained !== null) {
+      const pct = (marksObtained / sub.maxMarks) * 100;
+      if (pct >= 91) grade = 'A1';
+      else if (pct >= 81) grade = 'A2';
+      else if (pct >= 71) grade = 'B1';
+      else if (pct >= 61) grade = 'B2';
+      else if (pct >= 51) grade = 'C1';
+      else if (pct >= 41) grade = 'C2';
+      else if (pct >= 33) grade = 'D';
+      else grade = 'E';
+    }
     return {
       name: sub.name,
       code: sub.code,
@@ -38,17 +54,20 @@ export const ReportCardGenerator: React.FC = () => {
     };
   });
 
-  const totalMax = sampleSubjectMarks.reduce((sum, s) => sum + s.max, 0) || 500;
-  const totalObtained = sampleSubjectMarks.reduce((sum, s) => sum + s.obtained, 0) || 455;
-  const overallPct = Math.round((totalObtained / totalMax) * 100);
-  const overallGrade = overallPct >= 91 ? 'A1 (Outstanding)' : 'A2 (Excellent)';
+  const evaluatedSubjects = subjectMarks.filter(s => s.obtained !== null);
+  const totalMax = evaluatedSubjects.reduce((sum, s) => sum + s.max, 0);
+  const totalObtained = evaluatedSubjects.reduce((sum, s) => sum + (s.obtained || 0), 0);
+  const overallPct = totalMax > 0 ? Math.round((totalObtained / totalMax) * 100) : null;
+  const overallGrade = overallPct !== null
+    ? overallPct >= 91 ? 'A1 (Outstanding)' : overallPct >= 81 ? 'A2 (Excellent)' : overallPct >= 71 ? 'B1 (Very Good)' : 'B2 (Good)'
+    : 'Pending Evaluation';
 
   const handlePrint = () => {
     window.print();
   };
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Control Bar - hidden during print */}
       <div className="print:hidden flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4 bg-white p-4 rounded-xl border border-slate-200 shadow-sm">
         <div>
@@ -152,13 +171,13 @@ export const ReportCardGenerator: React.FC = () => {
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 font-medium text-slate-700">
-                {sampleSubjectMarks.map((sub, i) => (
+                {subjectMarks.map((sub, i) => (
                   <tr key={i} className="hover:bg-slate-50">
                     <td className="p-2.5 font-mono">{sub.code}</td>
                     <td className="p-2.5 font-bold text-slate-900">{sub.name}</td>
                     <td className="p-2.5 text-center font-mono">{sub.max}</td>
-                    <td className="p-2.5 text-center font-mono font-bold text-slate-900">{sub.obtained}</td>
-                    <td className="p-2.5 text-center font-mono">{Math.round((sub.obtained / sub.max) * 100)}%</td>
+                    <td className="p-2.5 text-center font-mono font-bold text-slate-900">{sub.obtained !== null ? sub.obtained : '--'}</td>
+                    <td className="p-2.5 text-center font-mono">{sub.obtained !== null ? `${Math.round((sub.obtained / sub.max) * 100)}%` : '--'}</td>
                     <td className="p-2.5 text-center font-bold text-brand-600">{sub.grade}</td>
                   </tr>
                 ))}

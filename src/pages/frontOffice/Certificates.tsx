@@ -25,7 +25,7 @@ export const Certificates: React.FC = () => {
   const student = students.find(s => s.id === selectedStudentId);
 
   return (
-    <div className="space-y-6 max-w-4xl mx-auto">
+    <div className="space-y-6 w-full">
       {/* Controls */}
       <div className="print:hidden bg-white p-4 rounded-xl border border-slate-200 shadow-sm flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>

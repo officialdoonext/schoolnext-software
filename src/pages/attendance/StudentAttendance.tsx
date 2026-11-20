@@ -106,9 +106,16 @@ export const StudentAttendance: React.FC = () => {
         updatedAt: new Date().toISOString(),
       }));
 
-      // Store in db
-      localStorage.setItem('school_next_db_attendance', JSON.stringify([...newRecords, ...cleaned]));
-      window.dispatchEvent(new CustomEvent('school_next_db_change', { detail: { collection: 'attendance' } }));
+      // Save records via dbService to Firestore
+      const existingAttendance = await dbService.getCollection<AttendanceRecord>('attendance');
+      for (const record of newRecords) {
+        const found = existingAttendance.find(r => r.studentId === record.studentId && r.date === record.date);
+        if (found) {
+          await dbService.updateDocument('attendance', found.id, record);
+        } else {
+          await dbService.createDocument('attendance', record);
+        }
+      }
       
       await refreshStats();
       setSavedSuccess(true);
@@ -122,7 +129,7 @@ export const StudentAttendance: React.FC = () => {
   const absentCount = students.filter(s => attendanceMap[s.id]?.status === 'absent').length;
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">Student Attendance Register</h1>

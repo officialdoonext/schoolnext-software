@@ -12,50 +12,7 @@ export const AuditLogs: React.FC = () => {
   useEffect(() => {
     const fetchLogs = async () => {
       const data = await dbService.getCollection<AuditLogRecord>('auditLogs');
-      if (data.length === 0) {
-        // Pre-populate sample audit trail
-        const sample: AuditLogRecord[] = [
-          {
-            id: 'log_01',
-            schoolId: 'school_next_main_01',
-            userId: 'usr_admin',
-            userName: 'Anand Kumar (Admin)',
-            userRole: 'school_admin',
-            action: 'CREATE',
-            module: 'students',
-            recordId: 'std_1001',
-            details: 'Enrolled new student Aarav Kumar Singh into Class 10-A',
-            timestamp: '2026-05-01T09:15:00.000Z',
-          },
-          {
-            id: 'log_02',
-            schoolId: 'school_next_main_01',
-            userId: 'usr_accountant',
-            userName: 'Ramesh Gupta (Accountant)',
-            userRole: 'accountant',
-            action: 'COLLECT_FEE',
-            module: 'payments',
-            recordId: 'pay_001',
-            details: 'Posted ₹27,000 fee receipt RCP-2026-0001 via UPI',
-            timestamp: '2026-05-04T10:30:00.000Z',
-          },
-          {
-            id: 'log_03',
-            schoolId: 'school_next_main_01',
-            userId: 'usr_teacher',
-            userName: 'Priya Sharma (Teacher)',
-            userRole: 'teacher',
-            action: 'ATTENDANCE_RECORD',
-            module: 'attendance',
-            recordId: 'att_class10',
-            details: 'Recorded daily attendance for Class 10-A (42 present, 2 absent)',
-            timestamp: '2026-05-05T08:15:00.000Z',
-          },
-        ];
-        setLogs(sample);
-      } else {
-        setLogs(data);
-      }
+      setLogs(data);
     };
     fetchLogs();
   }, []);
@@ -99,7 +56,7 @@ export const AuditLogs: React.FC = () => {
   ];
 
   return (
-    <div className="space-y-6 max-w-5xl mx-auto">
+    <div className="space-y-6 w-full">
       <div className="flex items-center justify-between">
         <div>
           <h1 className="text-2xl font-bold text-slate-900 tracking-tight">System Audit & Compliance Logs</h1>

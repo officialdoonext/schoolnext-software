@@ -25,15 +25,15 @@ export const StudentAdd: React.FC = () => {
     middleName: '',
     lastName: '',
     gender: 'male' as 'male' | 'female' | 'other',
-    dob: '2012-05-15',
-    bloodGroup: 'B+',
+    dob: '',
+    bloodGroup: '',
     nationality: 'Indian',
-    motherTongue: 'Hindi',
+    motherTongue: '',
     category: 'General' as 'General' | 'OBC' | 'SC' | 'ST' | 'EWS',
     photoUrl: '',
 
     // Academic Details
-    academicYearId: selectedAcademicYear?.id || 'ay_2026_2027',
+    academicYearId: selectedAcademicYear?.id || '',
     admissionDate: new Date().toISOString().split('T')[0],
     classId: '',
     sectionId: '',
@@ -51,15 +51,15 @@ export const StudentAdd: React.FC = () => {
     motherOccupation: '',
     guardianName: '',
     guardianPhone: '',
-    relationship: 'Father',
+    relationship: '',
 
     // Address
     currentAddress: '',
     permanentAddress: '',
-    city: 'Noida',
-    state: 'Uttar Pradesh',
+    city: '',
+    state: '',
     country: 'India',
-    pinCode: '201301',
+    pinCode: '',
 
     // Medical & Transport
     medicalConditions: '',
@@ -184,7 +184,7 @@ export const StudentAdd: React.FC = () => {
   };
 
   return (
-    <div className="space-y-5 max-w-5xl mx-auto font-sans">
+    <div className="space-y-5 w-full font-sans">
       {/* Top Header */}
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2.5">
